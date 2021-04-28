@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+
 public class Persona {
 
     private int id;
@@ -6,11 +8,13 @@ public class Persona {
 
     private String cognome;
 
-    private String sesso;
+    private char sesso;
 
     private String comuneNascita;
 
-    private String dataNascita;
+    private LocalDate dataNascita;
+
+    private String codiceFiscale;
 
     public int getId() {
         return id;
@@ -20,9 +24,7 @@ public class Persona {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
-    }
+    public String getNome() { return nome; }
 
     public void setNome(String nome) {
         this.nome = nome;
@@ -36,11 +38,11 @@ public class Persona {
         this.cognome = cognome;
     }
 
-    public String getSesso() {
+    public char getSesso() {
         return sesso;
     }
 
-    public void setSesso(String sesso) {
+    public void setSesso(char sesso) {
         this.sesso = sesso;
     }
 
@@ -52,11 +54,17 @@ public class Persona {
         this.comuneNascita = comuneNascita;
     }
 
-    public String getDataNascita() {
+    public LocalDate getDataNascita() {
         return dataNascita;
     }
 
-    public void setDataNascita(String dataNascita) {
+    public void setDataNascita(LocalDate dataNascita) {
         this.dataNascita = dataNascita;
     }
+
+    public String getCodiceFiscale() {
+        return codiceFiscale;
+    }
+
+    public void setCodiceFiscale(String codiceFiscale) { this.codiceFiscale = codiceFiscale; }
 }

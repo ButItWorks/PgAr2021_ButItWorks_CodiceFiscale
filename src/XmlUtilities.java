@@ -1,12 +1,15 @@
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class XmlUtilities {
 
-    public static ArrayList<Persona> leggiPersone() throws Exception {
+    public static ArrayList<Persona> leggiPersone() throws XMLStreamException, FileNotFoundException {
         XMLInputFactory xmlif = null;
         XMLStreamReader xmlr = null;
         String filepath = "resources/inputPersone.xml";
@@ -31,13 +34,13 @@ public class XmlUtilities {
                         persona.setCognome(xmlr.getText());
                     } else if(xmlr.getLocalName().equals("sesso")) {
                         xmlr.next();
-                        persona.setSesso(xmlr.getText());
+                        persona.setSesso(xmlr.getText().charAt(0));
                     } else if(xmlr.getLocalName().equals("comune_nascita")) {
                         xmlr.next();
                         persona.setComuneNascita(xmlr.getText());
                     } else if(xmlr.getLocalName().equals("data_nascita")) {
                         xmlr.next();
-                        persona.setDataNascita(xmlr.getText());
+                        persona.setDataNascita(LocalDate.parse(xmlr.getText()));
                     }
                     break;
 
@@ -54,7 +57,7 @@ public class XmlUtilities {
         return persone;
     }
 
-    public static ArrayList<Comune> leggiComuni() throws Exception {
+    public static ArrayList<Comune> leggiComuni() throws XMLStreamException, FileNotFoundException {
         XMLInputFactory xmlif = null;
         XMLStreamReader xmlr = null;
         String filepath = "resources/comuni.xml";
@@ -93,7 +96,7 @@ public class XmlUtilities {
         return comuni;
     }
 
-    public static ArrayList<String> leggiCodiciFiscali() throws Exception {
+    public static ArrayList<String> leggiCodiciFiscali() throws XMLStreamException, FileNotFoundException {
         XMLInputFactory xmlif = null;
         XMLStreamReader xmlr = null;
         String filepath = "resources/codiciFiscali.xml";
