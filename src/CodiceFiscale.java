@@ -1,31 +1,31 @@
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 public class CodiceFiscale {
 
     public static String generaCodiceFiscale(Persona p, ArrayList<Comune> comuni) throws ParseException {
         StringBuilder codiceFiscale = new StringBuilder();
-        codiceFiscale.append(cognomeLettere(p.getCognome()));
-        codiceFiscale.append(nomeLettere(p.getNome()));
-        codiceFiscale.append(dataLettere(p.getDataNascita()));
-        codiceFiscale.append(giornoSessoLettere(p.getDataNascita().getDayOfMonth(), p.getSesso()));
-        codiceFiscale.append(comuneLettere(p.getComuneNascita(), comuni));
-        codiceFiscale.append(carattereControlloLettere(codiceFiscale.toString()));
+        codiceFiscale.append(generaCognomeCf(p.getCognome()));
+        codiceFiscale.append(generaNomeCf(p.getNome()));
+        codiceFiscale.append(generaDataCf(p.getDataNascita()));
+        codiceFiscale.append(generaGiornoSessoCf(p.getDataNascita().getDayOfMonth(), p.getSesso()));
+        codiceFiscale.append(generaComuneCf(p.getComuneNascita(), comuni));
+        codiceFiscale.append(generaCarattereControlloCf(codiceFiscale.toString()));
         return new String(codiceFiscale);
     }
 
-    private static String cognomeLettere(String cognome) {
+    private static Boolean isVocale(char lettera) {
+        return "AEIOU".indexOf(lettera) != -1;
+    }
+
+    private static String generaCognomeCf(String cognome) {
         StringBuilder codiceCognome = new StringBuilder();
 
         //INSERIRE CONSONANTI IN ORDINE
         for (int i = 0; i < cognome.length() && codiceCognome.length() < 3; i++) {
             char lettera = cognome.charAt(i);
-            if (lettera >= 'A' && lettera <= 'Z' && lettera != 'A' && lettera != 'E' && lettera != 'I' && lettera != 'O' && lettera != 'U') {
+            if (!isVocale(lettera)) {
                 codiceCognome.append(lettera);
             }
         }
@@ -33,7 +33,7 @@ public class CodiceFiscale {
         //INSERIRE VOCALI SE CONSONANTI MINORI DI 3
         for (int i = 0; i < cognome.length() && codiceCognome.length() < 3; i++) {
             char lettera = cognome.charAt(i);
-            if(lettera >= 'A' && lettera <= 'Z' && (lettera == 'A' || lettera == 'E' || lettera == 'I' || lettera == 'O' || lettera == 'U')) {
+            if(isVocale(lettera)) {
                 codiceCognome.append(lettera);
             }
         }
@@ -46,14 +46,14 @@ public class CodiceFiscale {
         return new String(codiceCognome);
     }
 
-    private static String nomeLettere(String nome) {
+    private static String generaNomeCf(String nome) {
         StringBuilder consonanti = new StringBuilder();
         StringBuilder codiceNome = new StringBuilder();
 
         //INSERIRE CONSONANTI IN ORDINE
         for (int i = 0; i < nome.length() && codiceNome.length() < 3; i++) {
             char lettera = nome.charAt(i);
-            if (lettera >= 'A' && lettera <= 'Z' && lettera != 'A' && lettera != 'E' && lettera != 'I' && lettera != 'O' && lettera != 'U') {
+            if (!isVocale(lettera)) {
                 consonanti.append(lettera);
             }
         }
@@ -70,7 +70,7 @@ public class CodiceFiscale {
         //INSERIRE VOCALI SE CONSONANTI MINORI DI 3
         for (int i = 0; i < nome.length() && codiceNome.length() < 3; i++) {
             char lettera = nome.charAt(i);
-            if(lettera >= 'A' && lettera <= 'Z' && (lettera == 'A' || lettera == 'E' || lettera == 'I' || lettera == 'O' || lettera == 'U')) {
+            if(isVocale(lettera)) {
                 codiceNome.append(lettera);
             }
         }
@@ -83,7 +83,7 @@ public class CodiceFiscale {
         return new String(codiceNome);
     }
 
-    private static String dataLettere(LocalDate data) throws ParseException {
+    private static String generaDataCf(LocalDate data) throws ParseException {
         StringBuilder codiceData = new StringBuilder();
         String anno = Integer.toString(data.getYear());
         int mese = data.getMonthValue();
@@ -109,7 +109,7 @@ public class CodiceFiscale {
         return new String(codiceData);
     }
 
-    private static String giornoSessoLettere(int giorno, char sesso) throws ParseException {
+    private static String generaGiornoSessoCf(int giorno, char sesso) throws ParseException {
         StringBuilder codiceGiornoSesso = new StringBuilder();
 
         if(sesso == 'M') {
@@ -124,7 +124,7 @@ public class CodiceFiscale {
         return new String(codiceGiornoSesso);
     }
 
-    private static String comuneLettere(String comuneNascita ,ArrayList<Comune> comuni) {
+    private static String generaComuneCf(String comuneNascita , ArrayList<Comune> comuni) {
         StringBuilder comuneLettere = new StringBuilder();
 
         for (Comune c : comuni) {
@@ -137,7 +137,7 @@ public class CodiceFiscale {
         return new String(comuneLettere);
     }
 
-    private static String carattereControlloLettere(String codiceFiscaleAttuale) {
+    private static String generaCarattereControlloCf(String codiceFiscaleAttuale) {
         StringBuilder lettereCarattereControllo = new StringBuilder();
         int carattereControllo = 0;
 
