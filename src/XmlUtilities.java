@@ -1,18 +1,27 @@
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+/**
+ * Metodo XmlUtilities con soli metodi statici utilizzata per interagire
+ * con i file xml riguardo alle operazioni di lettura e la scrittura
+ * @author ButItWork
+ * @version 1.0
+ */
 public class XmlUtilities {
-
+    /**
+     * Metodo statico per ottenere un ArrayList di persone dalla lettura del file inputPersone.xml nella cartella inputFiles
+     * @return ArrayList di classe <b>Persona</b> contenente le persone lette
+     * @throws XMLStreamException
+     * @throws FileNotFoundException
+     */
     public static ArrayList<Persona> leggiPersone() throws XMLStreamException, FileNotFoundException {
         XMLInputFactory xmlif = null;
         XMLStreamReader xmlr = null;
-        String filepath = "resources/inputPersone.xml";
+        String filepath = "inputFiles/inputPersone.xml";
 
         xmlif = XMLInputFactory.newInstance();
         xmlr = xmlif.createXMLStreamReader("inputPersone", new FileInputStream(filepath));
@@ -57,10 +66,16 @@ public class XmlUtilities {
         return persone;
     }
 
+    /**
+     * Metodo statico per ottenere un ArrayList di comuni dalla lettura del file comuni.xml nella cartella inputFiles
+     * @return ArrayList di classe <b>Comune</b> contenente i comuni letti
+     * @throws XMLStreamException
+     * @throws FileNotFoundException
+     */
     public static ArrayList<Comune> leggiComuni() throws XMLStreamException, FileNotFoundException {
         XMLInputFactory xmlif = null;
         XMLStreamReader xmlr = null;
-        String filepath = "resources/comuni.xml";
+        String filepath = "inputFiles/comuni.xml";
 
         xmlif = XMLInputFactory.newInstance();
         xmlr = xmlif.createXMLStreamReader("comuni", new FileInputStream(filepath));
@@ -96,10 +111,16 @@ public class XmlUtilities {
         return comuni;
     }
 
+    /**
+     * Metodo statico per ottenere un ArrayList di comuni dalla lettura del file comuni.xml nella cartella inputFiles
+     * @return ArrayList di <b>String</b> contenente i codici fiscali letti
+     * @throws XMLStreamException
+     * @throws FileNotFoundException
+     */
     public static ArrayList<String> leggiCodiciFiscali() throws XMLStreamException, FileNotFoundException {
         XMLInputFactory xmlif = null;
         XMLStreamReader xmlr = null;
-        String filepath = "resources/codiciFiscali.xml";
+        String filepath = "inputFiles/codiciFiscali.xml";
 
         xmlif = XMLInputFactory.newInstance();
         xmlr = xmlif.createXMLStreamReader("codiciFiscali", new FileInputStream(filepath));
@@ -107,7 +128,7 @@ public class XmlUtilities {
         ArrayList<String> codiciFiscali = new ArrayList<String>();
 
         while (xmlr.hasNext()) {
-            if(xmlr.getEventType() == XMLStreamConstants.START_ELEMENT) {
+            if(xmlr.getEventType() == XMLStreamConstants.START_ELEMENT && xmlr.getLocalName().equals("codice")) {
                 xmlr.next();
                 codiciFiscali.add(xmlr.getText());
             }
@@ -115,6 +136,132 @@ public class XmlUtilities {
         }
 
         return codiciFiscali;
+    }
+
+    /**
+     * Metodo statico per generare un file codiciPersone.xml nella cartella outputFiles, contenente le persone
+     * con il relativo codice fiscale e i codici invalidi e spaiati
+     * @param codiciFiscali ArrayList di String
+     * @param persone ArrayList di classe <b>Persona</b>
+     * @param comuni ArrayList di classe <b>Comune</b>
+     * @throws XMLStreamException
+     * @throws FileNotFoundException
+     */
+    public static void produciOutput(ArrayList<String> codiciFiscali, ArrayList<Persona> persone , ArrayList<Comune> comuni) throws XMLStreamException, FileNotFoundException {
+        XMLOutputFactory xmlof = null;
+        XMLStreamWriter xmlw = null;
+        String filepath = "outputFiles/codiciPersone.xml";
+
+        ArrayList<String> codiciFiscaliAppaiati = new ArrayList<String>();
+        ArrayList<String> codiciFiscaliSpaiati = new ArrayList<String>();
+        ArrayList<String> codiciFiscaliInvalidi = new ArrayList<String>();
+
+        //Riempimento codiciFiscaliInvalidi e codiciFiscaliAppaiati
+        for (String cf : codiciFiscali) {
+            if(!CodiceFiscale.controlloCodiceFiscale(cf, comuni)) {
+                codiciFiscaliInvalidi.add(cf);
+            } else {
+                for (Persona p: persone) {
+                    if(p.getCodiceFiscale().equals(cf)) {
+                        codiciFiscaliAppaiati.add(cf);
+                    }
+                }
+            }
+        }
+
+        //Riempimento codiciFiscaliSpaiati
+        for (String cf : codiciFiscali) {
+            if(!codiciFiscaliAppaiati.contains(cf) && !codiciFiscaliInvalidi.contains(cf)) {
+                codiciFiscaliSpaiati.add(cf);
+            }
+        }
+
+        //Creazione del file
+        xmlof = XMLOutputFactory.newInstance();
+        xmlw = xmlof.createXMLStreamWriter(new FileOutputStream(filepath), "utf-8");
+        xmlw.writeStartDocument("utf-8", "1.0");
+        xmlw.writeStartElement("output");
+        xmlw.writeStartElement("persone");
+        xmlw.writeAttribute("numero", String.valueOf(persone.size()));
+
+        //STAMPA PERSONE
+        for (Persona p : persone) {
+            //APERTURA TAG PERSONA
+            xmlw.writeStartElement("persona");
+            xmlw.writeAttribute("id", Integer.toString(p.getId()));
+
+            //NOME PERSONA
+            xmlw.writeStartElement("nome");
+            xmlw.writeCharacters(p.getNome());
+            xmlw.writeEndElement();
+
+            //COGNOME PERSONA
+            xmlw.writeStartElement("cognome");
+            xmlw.writeCharacters(p.getCognome());
+            xmlw.writeEndElement();
+
+            //SESSO PERSONA
+            xmlw.writeStartElement("sesso");
+            xmlw.writeCharacters(Character.toString(p.getSesso()));
+            xmlw.writeEndElement();
+
+            //COMUNE DI NASCITA PERSONA
+            xmlw.writeStartElement("comune_nascita");
+            xmlw.writeCharacters(p.getComuneNascita());
+            xmlw.writeEndElement();
+
+            //COMUNE DI NASCITA PERSONA
+            xmlw.writeStartElement("data_nascita");
+            xmlw.writeCharacters(p.getDataNascita().toString());
+            xmlw.writeEndElement();
+
+            //CODICE FISCALE PERSONA
+            xmlw.writeStartElement("codice_fiscale");
+            if(codiciFiscaliAppaiati.contains(p.getCodiceFiscale())) {
+                xmlw.writeCharacters(p.getCodiceFiscale());
+            } else {
+                xmlw.writeCharacters("ASSENTE");
+            }
+            xmlw.writeEndElement();
+
+            //CHIUSURA TAG PERSONA
+            xmlw.writeEndElement();
+        }
+        xmlw.writeEndElement();
+
+        //CODICI INVALIDI E APPAIATI
+        xmlw.writeStartElement("codici");
+
+        //CODICI INVALIDI
+        xmlw.writeStartElement("invalidi");
+        xmlw.writeAttribute("numero", Integer.toString(codiciFiscaliInvalidi.size()));
+        for (String cf : codiciFiscaliInvalidi) {
+            //STAMPA CODICI INVALIDI
+            xmlw.writeStartElement("codice");
+            xmlw.writeCharacters(cf);
+            xmlw.writeEndElement();
+        }
+        xmlw.writeEndElement();
+
+        //CODICI SPAIATI
+        xmlw.writeStartElement("spaiati");
+        xmlw.writeAttribute("numero", Integer.toString(codiciFiscaliSpaiati.size()));
+        for (String cf : codiciFiscaliSpaiati) {
+            //STAMPA CODICI SPAIATI
+            xmlw.writeStartElement("codice");
+            xmlw.writeCharacters(cf);
+            xmlw.writeEndElement();
+        }
+        xmlw.writeEndElement();
+
+        //CHIUSURA CODICI INVALIDI E APPAIATI
+        xmlw.writeEndElement();
+
+
+        xmlw.writeEndElement();
+        xmlw.writeEndDocument();
+        xmlw.flush();
+        xmlw.close();
     }
 
 }

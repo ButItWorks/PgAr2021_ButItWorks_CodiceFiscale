@@ -24,7 +24,9 @@ public class Persona {
         this.id = id;
     }
 
-    public String getNome() { return nome; }
+    public String getNome() {
+        return nome;
+    }
 
     public void setNome(String nome) {
         this.nome = nome;
@@ -66,5 +68,7 @@ public class Persona {
         return codiceFiscale;
     }
 
-    public void setCodiceFiscale(String codiceFiscale) { this.codiceFiscale = codiceFiscale; }
+    public void setCodiceFiscale(String codiceFiscale) {
+        this.codiceFiscale = codiceFiscale;
+    }
 }

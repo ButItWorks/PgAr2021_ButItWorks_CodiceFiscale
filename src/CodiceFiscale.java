@@ -1,140 +1,41 @@
+import javax.xml.stream.XMLStreamException;
+import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class CodiceFiscale {
-
-    public static String generaCodiceFiscale(Persona p, ArrayList<Comune> comuni) throws ParseException {
-        StringBuilder codiceFiscale = new StringBuilder();
-        codiceFiscale.append(generaCognomeCf(p.getCognome()));
-        codiceFiscale.append(generaNomeCf(p.getNome()));
-        codiceFiscale.append(generaDataCf(p.getDataNascita()));
-        codiceFiscale.append(generaGiornoSessoCf(p.getDataNascita().getDayOfMonth(), p.getSesso()));
-        codiceFiscale.append(generaComuneCf(p.getComuneNascita(), comuni));
-        codiceFiscale.append(generaCarattereControlloCf(codiceFiscale.toString()));
-        return new String(codiceFiscale);
-    }
-
     private static Boolean isVocale(char lettera) {
         return "AEIOU".indexOf(lettera) != -1;
     }
 
-    private static String generaCognomeCf(String cognome) {
-        StringBuilder codiceCognome = new StringBuilder();
+    private static Boolean isNomeCognomeValido(String codice) {
+        char car1 = codice.charAt(0);
+        char car2 = codice.charAt(1);
+        char car3 = codice.charAt(2);
 
-        //INSERIRE CONSONANTI IN ORDINE
-        for (int i = 0; i < cognome.length() && codiceCognome.length() < 3; i++) {
-            char lettera = cognome.charAt(i);
-            if (!isVocale(lettera)) {
-                codiceCognome.append(lettera);
+        if (!isVocale(car3) && car3 != 'X') {
+            if (!isVocale(car2) && car2 != 'X') {
+                if(!isVocale(car1) && car1 != 'X') {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
             }
-        }
-
-        //INSERIRE VOCALI SE CONSONANTI MINORI DI 3
-        for (int i = 0; i < cognome.length() && codiceCognome.length() < 3; i++) {
-            char lettera = cognome.charAt(i);
-            if(isVocale(lettera)) {
-                codiceCognome.append(lettera);
-            }
-        }
-
-        //AGGIUNGERE X SE LETTERE MINORI DI 3
-        while(codiceCognome.length() < 3) {
-            codiceCognome.append("X");
-        }
-
-        return new String(codiceCognome);
-    }
-
-    private static String generaNomeCf(String nome) {
-        StringBuilder consonanti = new StringBuilder();
-        StringBuilder codiceNome = new StringBuilder();
-
-        //INSERIRE CONSONANTI IN ORDINE
-        for (int i = 0; i < nome.length() && codiceNome.length() < 3; i++) {
-            char lettera = nome.charAt(i);
-            if (!isVocale(lettera)) {
-                consonanti.append(lettera);
-            }
-        }
-
-        //SE CONSONANTI MAGGIORI DI 3 METTO LA PRIMA LA TERZA E LA QUARTA
-        if(consonanti.length() > 3) {
-            codiceNome.append(consonanti.charAt(0));
-            codiceNome.append(consonanti.charAt(2));
-            codiceNome.append(consonanti.charAt(3));
         } else {
-            codiceNome.append(consonanti);
-        }
-
-        //INSERIRE VOCALI SE CONSONANTI MINORI DI 3
-        for (int i = 0; i < nome.length() && codiceNome.length() < 3; i++) {
-            char lettera = nome.charAt(i);
-            if(isVocale(lettera)) {
-                codiceNome.append(lettera);
+            if (!isVocale(car2) && car2 != 'X') {
+                if(!isVocale(car1) && car1 != 'X') {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            } else {
+                return true;
             }
         }
-
-        //AGGIUNGERE X SE LETTERE MINORI DI 3
-        while(codiceNome.length() < 3) {
-            codiceNome.append("X");
-        }
-
-        return new String(codiceNome);
-    }
-
-    private static String generaDataCf(LocalDate data) throws ParseException {
-        StringBuilder codiceData = new StringBuilder();
-        String anno = Integer.toString(data.getYear());
-        int mese = data.getMonthValue();
-
-        codiceData.append(anno.charAt(anno.length()-2));
-        codiceData.append(anno.charAt(anno.length()-1));
-
-        switch (mese) {
-            case 1: {codiceData.append("A"); break;}
-            case 2: {codiceData.append("B"); break;}
-            case 3: {codiceData.append("C"); break;}
-            case 4: {codiceData.append("D"); break;}
-            case 5: {codiceData.append("E"); break;}
-            case 6: {codiceData.append("H"); break;}
-            case 7: {codiceData.append("L"); break;}
-            case 8: {codiceData.append("M"); break;}
-            case 9: {codiceData.append("P"); break;}
-            case 10: {codiceData.append("R"); break;}
-            case 11: {codiceData.append("S"); break;}
-            case 12: {codiceData.append("T"); break;}
-        }
-
-        return new String(codiceData);
-    }
-
-    private static String generaGiornoSessoCf(int giorno, char sesso) throws ParseException {
-        StringBuilder codiceGiornoSesso = new StringBuilder();
-
-        if(sesso == 'M') {
-            if(giorno >= 1 && giorno <= 9) {
-                codiceGiornoSesso.append("0");
-            }
-            codiceGiornoSesso.append(Integer.toString(giorno));
-        } else {
-            codiceGiornoSesso.append(Integer.toString(giorno + 40));
-        }
-
-        return new String(codiceGiornoSesso);
-    }
-
-    private static String generaComuneCf(String comuneNascita , ArrayList<Comune> comuni) {
-        StringBuilder comuneLettere = new StringBuilder();
-
-        for (Comune c : comuni) {
-            if(comuneNascita.equals(c.getNome())) {
-                comuneLettere.append(c.getCodice());
-                break;
-            }
-        }
-
-        return new String(comuneLettere);
     }
 
     private static String generaCarattereControlloCf(String codiceFiscaleAttuale) {
@@ -255,4 +156,246 @@ public class CodiceFiscale {
 
         return new String(lettereCarattereControllo);
     }
+
+    //=========================
+    //GENERATORE CODICE FISCALE
+    //=========================
+    public static String generaCodiceFiscale(Persona p, ArrayList<Comune> comuni) throws ParseException {
+        StringBuilder codiceFiscale = new StringBuilder();
+        codiceFiscale.append(generaCognomeCf(p.getCognome()));
+        codiceFiscale.append(generaNomeCf(p.getNome()));
+        codiceFiscale.append(generaDataCf(p.getDataNascita()));
+        codiceFiscale.append(generaGiornoSessoCf(p.getDataNascita().getDayOfMonth(), p.getSesso()));
+        codiceFiscale.append(generaComuneCf(p.getComuneNascita(), comuni));
+        codiceFiscale.append(generaCarattereControlloCf(codiceFiscale.toString()));
+        return new String(codiceFiscale);
+    }
+
+    private static String generaCognomeCf(String cognome) {
+        StringBuilder codiceCognome = new StringBuilder();
+
+        //INSERIRE CONSONANTI IN ORDINE
+        for (int i = 0; i < cognome.length() && codiceCognome.length() < 3; i++) {
+            char lettera = cognome.charAt(i);
+            if (!isVocale(lettera)) {
+                codiceCognome.append(lettera);
+            }
+        }
+
+        //INSERIRE VOCALI SE CONSONANTI MINORI DI 3
+        for (int i = 0; i < cognome.length() && codiceCognome.length() < 3; i++) {
+            char lettera = cognome.charAt(i);
+            if(isVocale(lettera)) {
+                codiceCognome.append(lettera);
+            }
+        }
+
+        //AGGIUNGERE X SE LETTERE MINORI DI 3
+        while(codiceCognome.length() < 3) {
+            codiceCognome.append("X");
+        }
+
+        return new String(codiceCognome);
+    }
+
+    private static String generaNomeCf(String nome) {
+        StringBuilder consonanti = new StringBuilder();
+        StringBuilder codiceNome = new StringBuilder();
+
+        //INSERIRE CONSONANTI IN ORDINE
+        for (int i = 0; i < nome.length() && codiceNome.length() < 3; i++) {
+            char lettera = nome.charAt(i);
+            if (!isVocale(lettera)) {
+                consonanti.append(lettera);
+            }
+        }
+
+        //SE CONSONANTI MAGGIORI DI 3 METTO LA PRIMA LA TERZA E LA QUARTA
+        if(consonanti.length() > 3) {
+            codiceNome.append(consonanti.charAt(0));
+            codiceNome.append(consonanti.charAt(2));
+            codiceNome.append(consonanti.charAt(3));
+        } else {
+            codiceNome.append(consonanti);
+        }
+
+        //INSERIRE VOCALI SE CONSONANTI MINORI DI 3
+        for (int i = 0; i < nome.length() && codiceNome.length() < 3; i++) {
+            char lettera = nome.charAt(i);
+            if(isVocale(lettera)) {
+                codiceNome.append(lettera);
+            }
+        }
+
+        //AGGIUNGERE X SE LETTERE MINORI DI 3
+        while(codiceNome.length() < 3) {
+            codiceNome.append("X");
+        }
+
+        return new String(codiceNome);
+    }
+
+    private static String generaDataCf(LocalDate data) throws ParseException {
+        StringBuilder codiceData = new StringBuilder();
+        String anno = Integer.toString(data.getYear());
+        int mese = data.getMonthValue();
+
+        codiceData.append(anno.charAt(anno.length()-2));
+        codiceData.append(anno.charAt(anno.length()-1));
+
+        switch (mese) {
+            case 1: {codiceData.append("A"); break;}
+            case 2: {codiceData.append("B"); break;}
+            case 3: {codiceData.append("C"); break;}
+            case 4: {codiceData.append("D"); break;}
+            case 5: {codiceData.append("E"); break;}
+            case 6: {codiceData.append("H"); break;}
+            case 7: {codiceData.append("L"); break;}
+            case 8: {codiceData.append("M"); break;}
+            case 9: {codiceData.append("P"); break;}
+            case 10: {codiceData.append("R"); break;}
+            case 11: {codiceData.append("S"); break;}
+            case 12: {codiceData.append("T"); break;}
+        }
+
+        return new String(codiceData);
+    }
+
+    private static String generaGiornoSessoCf(int giorno, char sesso) throws ParseException {
+        StringBuilder codiceGiornoSesso = new StringBuilder();
+
+        if(sesso == 'M') {
+            if(giorno >= 1 && giorno <= 9) {
+                codiceGiornoSesso.append("0");
+            }
+            codiceGiornoSesso.append(Integer.toString(giorno));
+        } else {
+            codiceGiornoSesso.append(Integer.toString(giorno + 40));
+        }
+
+        return new String(codiceGiornoSesso);
+    }
+
+    private static String generaComuneCf(String comuneNascita , ArrayList<Comune> comuni) {
+        StringBuilder comuneLettere = new StringBuilder();
+
+        for (Comune c : comuni) {
+            if(comuneNascita.equals(c.getNome())) {
+                comuneLettere.append(c.getCodice());
+                break;
+            }
+        }
+
+        return new String(comuneLettere);
+    }
+
+    //=========================
+    //CONTROLLA CODICE FISCALE
+    //=========================
+    public static Boolean controlloCodiceFiscale(String codiceFiscale, ArrayList<Comune> comuni) throws XMLStreamException, FileNotFoundException {
+        return codiceFiscale.length() == 16 && analizzaCognome(codiceFiscale) && analizzaNome(codiceFiscale) && analizzaAnno(codiceFiscale) && analizzaMese(codiceFiscale)
+                && analizzaGiornoSesso(codiceFiscale) && analizzaComune(codiceFiscale, comuni) && analizzaCarattereDiControllo(codiceFiscale);
+    }
+
+    private static Boolean analizzaCognome(String daAnalizzare){
+        //compongo stringa cognome
+        String codCognome = daAnalizzare.substring(0,3);
+
+        //controllo che ci siano solo lettere
+        if (codCognome.matches("^[0-9]+$")) {
+            return false;
+        }
+
+        return isNomeCognomeValido(codCognome);
+    }
+
+    private static Boolean analizzaNome(String daAnalizzare) {
+        //compongo stringa nome
+        String codNome = daAnalizzare.substring(3,6);
+
+        //controllo che ci siano solo lettere
+        if (codNome.matches("^[0-9]+$")) {
+            return false;
+        }
+
+        return isNomeCognomeValido(codNome);
+    }
+
+    private static Boolean analizzaAnno(String daAnalizzare) {
+        //estrapolo anno
+        String annoEx;
+        annoEx=daAnalizzare.substring(6,8);
+
+        //controllo non ci siano lettere
+        if(annoEx.matches("^[A-Z]+$"))
+            return false;
+
+        return true;
+    }
+
+
+    private static Boolean analizzaMese(String daAnalizzare) {
+        String meseEx = daAnalizzare.substring(8,9);
+        String caratteriControllo = "ABCDEHLMPRST";
+
+        //controllo non ci siano numeri
+        if(meseEx.matches("^[0-9]+$")){
+            return false;
+        }
+        //controllo se il caratttere e' corretto
+        else if(caratteriControllo.contains(meseEx)) {
+            return true;
+        }
+        return false;
+    }
+
+    private static Boolean analizzaGiornoSesso(String daAnalizzare){
+        String giornoEx = daAnalizzare.substring(9,11);
+        int num = 0;
+
+        //controllo non ci siano lettere
+        if(giornoEx.matches("^[A-Z]+$")){
+            return false;
+        } else {
+            num = Integer.parseInt(giornoEx);
+        }
+
+        // controllo validità giorno
+        String meseEx = daAnalizzare.substring(8,9);
+        String caratteriControlloMese = "SDHP";
+
+        if(meseEx.equals("B")) {
+            return (num >= 1 && num <= 28) || (num >= 41 && num <= 68);
+        }
+        else if(caratteriControlloMese.contains(meseEx)) {
+            return (num >= 1 && num <= 30) || (num >= 41 && num <= 70);
+        }
+        else
+        {
+            return (num >= 1 && num <= 31) || (num >= 41 && num <= 71);
+        }
+    }
+
+
+    private static Boolean analizzaComune(String daAnalizzare, ArrayList<Comune> comuni) throws XMLStreamException, FileNotFoundException {
+        String comEx = daAnalizzare.substring(11, 15);
+
+        for(Comune c : comuni) {
+            if(c.getCodice().equals(comEx)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    private static Boolean analizzaCarattereDiControllo(String daAnalizzare) {
+        String codEx = daAnalizzare.substring(0,15);
+        String carattereControllo = daAnalizzare.substring(15);
+        String carattereControlloReale = generaCarattereControlloCf(codEx);
+
+        return carattereControllo.equals(carattereControlloReale);
+    }
+
 }
