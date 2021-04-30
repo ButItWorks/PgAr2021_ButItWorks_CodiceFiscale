@@ -139,7 +139,7 @@ public class XmlUtilities {
     }
 
     /**
-     * Metodo statico per generare un file codiciPersone.xml nella cartella outputFiles, contenente le persone
+     * Metodo statico per generare un file codiciPersone.xml nella root del progetto, contenente le persone
      * con il relativo codice fiscale e i codici invalidi e spaiati
      * @param codiciFiscali ArrayList di String
      * @param persone ArrayList di classe <b>Persona</b>
@@ -150,7 +150,7 @@ public class XmlUtilities {
     public static void produciOutput(ArrayList<String> codiciFiscali, ArrayList<Persona> persone , ArrayList<Comune> comuni) throws XMLStreamException, FileNotFoundException {
         XMLOutputFactory xmlof = null;
         XMLStreamWriter xmlw = null;
-        String filepath = "outputFiles/codiciPersone.xml";
+        String filepath = "codiciPersone.xml";
 
         ArrayList<String> codiciFiscaliAppaiati = new ArrayList<String>();
         ArrayList<String> codiciFiscaliSpaiati = new ArrayList<String>();
