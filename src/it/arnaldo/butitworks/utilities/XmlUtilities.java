@@ -1,3 +1,7 @@
+package it.arnaldo.butitworks.utilities;
+import it.arnaldo.butitworks.model.Comune;
+import it.arnaldo.butitworks.model.Persona;
+import it.arnaldo.butitworks.utilities.CodiceFiscaleUtilities;
 import javax.xml.stream.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -6,7 +10,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 /**
- * Metodo XmlUtilities con soli metodi statici utilizzata per interagire
+ * Metodo it.arnaldo.butitworks.utilities.XmlUtilities con soli metodi statici utilizzata per interagire
  * con i file xml riguardo alle operazioni di lettura e la scrittura
  * @author ButItWork
  * @version 1.0
@@ -14,7 +18,7 @@ import java.util.ArrayList;
 public class XmlUtilities {
     /**
      * Metodo statico per ottenere un ArrayList di persone dalla lettura del file inputPersone.xml nella cartella inputFiles
-     * @return ArrayList di classe <b>Persona</b> contenente le persone lette
+     * @return ArrayList di classe <b>it.arnaldo.butitworks.model.Persona</b> contenente le persone lette
      * @throws XMLStreamException
      * @throws FileNotFoundException
      */
@@ -68,7 +72,7 @@ public class XmlUtilities {
 
     /**
      * Metodo statico per ottenere un ArrayList di comuni dalla lettura del file comuni.xml nella cartella inputFiles
-     * @return ArrayList di classe <b>Comune</b> contenente i comuni letti
+     * @return ArrayList di classe <b>it.arnaldo.butitworks.model.Comune</b> contenente i comuni letti
      * @throws XMLStreamException
      * @throws FileNotFoundException
      */
@@ -142,8 +146,8 @@ public class XmlUtilities {
      * Metodo statico per generare un file codiciPersone.xml nella root del progetto, contenente le persone
      * con il relativo codice fiscale e i codici invalidi e spaiati
      * @param codiciFiscali ArrayList di String
-     * @param persone ArrayList di classe <b>Persona</b>
-     * @param comuni ArrayList di classe <b>Comune</b>
+     * @param persone ArrayList di classe <b>it.arnaldo.butitworks.model.Persona</b>
+     * @param comuni ArrayList di classe <b>it.arnaldo.butitworks.model.Comune</b>
      * @throws XMLStreamException
      * @throws FileNotFoundException
      */
@@ -158,7 +162,7 @@ public class XmlUtilities {
 
         //Riempimento codiciFiscaliInvalidi e codiciFiscaliAppaiati
         for (String cf : codiciFiscali) {
-            if(!CodiceFiscale.controlloCodiceFiscale(cf, comuni)) {
+            if(!CodiceFiscaleUtilities.controlloCodiceFiscale(cf, comuni)) {
                 codiciFiscaliInvalidi.add(cf);
             } else {
                 for (Persona p: persone) {
@@ -182,7 +186,7 @@ public class XmlUtilities {
         xmlw.writeStartDocument("utf-8", "1.0");
         xmlw.writeStartElement("output");
         xmlw.writeStartElement("persone");
-        xmlw.writeAttribute("numero", String.valueOf(persone.size()));
+        xmlw.writeAttribute("numero", Integer.toString(persone.size()));
 
         //STAMPA PERSONE
         for (Persona p : persone) {

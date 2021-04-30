@@ -1,21 +1,16 @@
+package it.arnaldo.butitworks.model;
 import java.time.LocalDate;
 
 public class Persona {
-
     private int id;
-
     private String nome;
-
     private String cognome;
-
     private char sesso;
-
     private String comuneNascita;
-
     private LocalDate dataNascita;
-
     private String codiceFiscale;
 
+    //GETTERS AND SETTERS
     public int getId() {
         return id;
     }

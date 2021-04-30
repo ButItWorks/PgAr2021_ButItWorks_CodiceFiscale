@@ -1,30 +1,46 @@
+import it.arnaldo.butitworks.model.Comune;
+import it.arnaldo.butitworks.model.Persona;
+import it.arnaldo.butitworks.utilities.CodiceFiscaleUtilities;
+import it.arnaldo.butitworks.utilities.XmlUtilities;
+
 import java.util.ArrayList;
 
 public class MainCodiceFiscale {
 
+    private static final String BENVENUTO_MSG = "********* PROGRAMMA CODICE FISCALE *********";
+    private static final String LETTURA_FILE_MSG = "Lettura %s in corso...";
+    private static final String LETTURA_FILE_RIUSCITA_MSG = "Lettura del file %s completata";
+    private static final String SCRITTURA_FILE_MSG  = "Creazione del file %s in corso...";
+    private static final String SCRITTURA_FILE_RIUSCITA_MSG = "File creato correttamente";
+
     public static void main(String[] args) {
         try {
-            System.out.println("********* CODICE FISCALE *********");
+            System.out.println(BENVENUTO_MSG);
 
-            System.out.println("Lettura file inputPersone.xml in corso");
+            //Lettura file inputFiles/inputPersone.xml
+            System.out.println(String.format(LETTURA_FILE_MSG, "inputPersone.xml"));
             ArrayList<Persona> persone = XmlUtilities.leggiPersone();
-            System.out.println("Lettura completata");
+            System.out.println(String.format(LETTURA_FILE_RIUSCITA_MSG, "inputPersone.xml"));
 
-            System.out.println("Lettura file comuni.xml in corso");
+            //Lettura file inputFiles/comuni.xml
+            System.out.println(String.format(LETTURA_FILE_MSG, "comuni.xml"));
             ArrayList<Comune> comuni = XmlUtilities.leggiComuni();
-            System.out.println("Lettura completata");
+            System.out.println(String.format(LETTURA_FILE_RIUSCITA_MSG, "comuni.xml"));
 
-            System.out.println("Lettura file codiciFiscali.xml in corso");
+            //Lettura file inputFiles/codicifiscali.xml
+            System.out.println(String.format(LETTURA_FILE_MSG, "codicifiscali.xml"));
             ArrayList<String> codiciFiscali = XmlUtilities.leggiCodiciFiscali();
-            System.out.println("Lettura completata");
+            System.out.println(String.format(LETTURA_FILE_RIUSCITA_MSG, "codicifiscali.xml"));
 
+            //Inserisce il codice fiscale rispettivo ad ogni persona
             for (Persona p : persone) {
-                p.setCodiceFiscale(CodiceFiscale.generaCodiceFiscale(p, comuni));
+                p.setCodiceFiscale(CodiceFiscaleUtilities.generaCodiceFiscale(p, comuni));
             }
 
-            System.out.println("Creazione del file in corso...");
+            //Creazione file codiciPersone.xml
+            System.out.println(String.format(SCRITTURA_FILE_MSG, "codiciPersone.xml"));
             XmlUtilities.produciOutput(codiciFiscali, persone, comuni);
-            System.out.println("File creato correttamente!");
+            System.out.println(String.format(SCRITTURA_FILE_RIUSCITA_MSG, "codiciPersone.xml"));
 
         } catch (Exception e) {
             System.out.println("Errore nell'inizializzazione del reader:");
