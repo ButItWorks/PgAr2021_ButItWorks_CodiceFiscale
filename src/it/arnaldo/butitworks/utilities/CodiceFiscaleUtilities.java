@@ -352,7 +352,6 @@ public class CodiceFiscaleUtilities {
                 return true;
             }
         }
-
     }
 
     /**

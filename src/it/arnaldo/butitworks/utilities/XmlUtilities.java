@@ -1,7 +1,6 @@
 package it.arnaldo.butitworks.utilities;
 import it.arnaldo.butitworks.model.Comune;
 import it.arnaldo.butitworks.model.Persona;
-import it.arnaldo.butitworks.utilities.CodiceFiscaleUtilities;
 import javax.xml.stream.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 public class XmlUtilities {
     /**
      * Metodo statico per ottenere un ArrayList di persone dalla lettura del file inputPersone.xml nella cartella inputFiles
-     * @return ArrayList di classe <b>it.arnaldo.butitworks.model.Persona</b> contenente le persone lette
+     * @return ArrayList di classe <b>Persona</b> contenente le persone lette
      * @throws XMLStreamException
      * @throws FileNotFoundException
      */
@@ -154,7 +153,7 @@ public class XmlUtilities {
     public static void produciOutput(ArrayList<String> codiciFiscali, ArrayList<Persona> persone , ArrayList<Comune> comuni) throws XMLStreamException, FileNotFoundException {
         XMLOutputFactory xmlof = null;
         XMLStreamWriter xmlw = null;
-        String filepath = "codiciPersone.xml";
+        String filepath = "outputFiles/codiciPersone.xml";
 
         ArrayList<String> codiciFiscaliAppaiati = new ArrayList<String>();
         ArrayList<String> codiciFiscaliSpaiati = new ArrayList<String>();
